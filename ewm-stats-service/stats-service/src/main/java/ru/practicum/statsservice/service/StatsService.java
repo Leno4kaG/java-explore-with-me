@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -29,13 +30,13 @@ public class StatsService {
 
     public Set<ViewStats> getAllStats(String start, String end, List<String> uris, boolean unique) {
         List<StatsEntity> statsEntities;
-        log.info("Start {} end {} uris {}",start, end, uris);
+        log.info("Start {} end {} uris {}", start, end, uris);
         if (unique) {
             statsEntities = statsRepository.findAllByStatsTimeBetweenAndUriIn(LocalDateTime
-                    .parse(start, formatter), LocalDateTime.parse(end, formatter), uris)
+                            .parse(start, formatter), LocalDateTime.parse(end, formatter), uris)
                     .stream().filter(distinctByKey(StatsEntity::getIp)).collect(Collectors.toList());
 
-        }else{
+        } else {
             statsEntities = statsRepository.findAllByStatsTimeBetweenAndUriIn(LocalDateTime
                     .parse(start, formatter), LocalDateTime.parse(end, formatter), uris);
             log.info(statsEntities.toString());
@@ -44,7 +45,7 @@ public class StatsService {
         return statsMapper.toViewList(statsEntities);
     }
 
-    public void save(EndpointHit request){
+    public void save(EndpointHit request) {
         statsRepository.save(statsMapper.toEntity(request));
     }
 

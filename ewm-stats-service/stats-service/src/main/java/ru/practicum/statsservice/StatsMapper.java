@@ -20,21 +20,21 @@ public interface StatsMapper {
 
     EndpointHit toEndpointHit(StatsEntity entity);
 
-    default Set<ViewStats> toViewList(List<StatsEntity> statsEntities){
-        if(statsEntities.isEmpty()){
+    default Set<ViewStats> toViewList(List<StatsEntity> statsEntities) {
+        if (statsEntities.isEmpty()) {
             return Collections.emptySet();
         }
         Set<ViewStats> viewStatsList = new HashSet<>();
         ViewStats viewStats = new ViewStats();
         int hits = 1;
-        if(statsEntities.size()==1){
+        if (statsEntities.size() == 1) {
             viewStats.setApp(statsEntities.get(0).getApp());
             viewStats.setUri(statsEntities.get(0).getUri());
             viewStats.setHits(hits);
             viewStatsList.add(viewStats);
             return viewStatsList;
         }
-        for(int i=0; i<statsEntities.size(); i++) {
+        for (int i = 0; i < statsEntities.size(); i++) {
             if (statsEntities.get(i).getUri().equals(statsEntities.get(i + 1).getUri())) {
                 viewStats.setApp(statsEntities.get(i).getApp());
                 viewStats.setUri(statsEntities.get(i).getUri());
@@ -47,10 +47,10 @@ public interface StatsMapper {
             viewStats.setHits(hits);
             viewStatsList.add(viewStats);
         }
-            return viewStatsList;
-        }
+        return viewStatsList;
+    }
 
-        default LocalDateTime getDate(String date){
+    default LocalDateTime getDate(String date) {
         return LocalDateTime.parse(date, formatter);
-        }
+    }
 }
