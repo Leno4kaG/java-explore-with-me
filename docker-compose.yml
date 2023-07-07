@@ -24,7 +24,8 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=root
 
-  build: ./main-service
+  ewm-service:
+    build: ./main-service
     container_name: ewm-service
     ports:
       - "8080:8080"
