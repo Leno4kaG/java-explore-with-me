@@ -16,8 +16,6 @@ services:
     container_name: stats-db
     ports:
       - "6541:5432"
-    volumes:
-      - stats-db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=stats
       - POSTGRES_USER=postgres
