@@ -1,6 +1,7 @@
 version: '3.1'
 services:
-  build: ./stats-service/stats-server
+  stats-server:
+    build: ./stats-service/stats-server
     container_name: stats-server
     ports:
       - "9090:9090"
@@ -16,6 +17,8 @@ services:
     container_name: stats-db
     ports:
       - "6541:5432"
+    volumes:
+      - stats-db:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=stats
       - POSTGRES_USER=postgres
