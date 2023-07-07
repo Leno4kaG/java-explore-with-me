@@ -8,7 +8,6 @@ import ru.practicum.stats.dto.ViewStats;
 import ru.practicum.stats.server.model.StatsEntity;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 
 @Mapper(componentModel = "spring")

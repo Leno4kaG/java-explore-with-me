@@ -10,7 +10,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.stats.dto.EndpointHit;
 import ru.practicum.stats.dto.Utils;
 import ru.practicum.stats.dto.ViewStats;
-import ru.practicum.stats.server.mapper.StatsMapper;
 import ru.practicum.stats.server.model.StatsEntity;
 import ru.practicum.stats.server.repository.StatsRepository;
 import ru.practicum.stats.server.service.StatsService;
