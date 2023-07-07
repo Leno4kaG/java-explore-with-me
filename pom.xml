@@ -33,9 +33,7 @@
 		<lombok.version>1.18.20</lombok.version>
 		<mapstruct.version>1.5.3.Final</mapstruct.version>
 	</properties>
-	<modules>
-		<module>ewm-stats-service</module>
-	</modules>
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -174,14 +172,14 @@
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
-<!--					<configuration>-->
-<!--						<excludes>-->
-<!--							<exclude>-->
-<!--								<groupId>org.projectlombok</groupId>-->
-<!--								<artifactId>lombok</artifactId>-->
-<!--							</exclude>-->
-<!--						</excludes>-->
-<!--					</configuration>-->
+					<configuration>
+						<excludes>
+							<exclude>
+								<groupId>org.projectlombok</groupId>
+								<artifactId>lombok</artifactId>
+							</exclude>
+						</excludes>
+					</configuration>
 				</plugin>
 				<plugin>
 					<artifactId>maven-project-info-reports-plugin</artifactId>
