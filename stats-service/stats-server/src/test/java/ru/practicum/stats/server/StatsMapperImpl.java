@@ -1,12 +1,9 @@
 package ru.practicum.stats.server;
 
 import ru.practicum.stats.dto.EndpointHit;
-import ru.practicum.stats.dto.Utils;
 import ru.practicum.stats.dto.ViewStats;
 import ru.practicum.stats.server.mapper.StatsMapper;
 import ru.practicum.stats.server.model.StatsEntity;
-
-import java.time.LocalDateTime;
 
 public class StatsMapperImpl implements StatsMapper {
 
@@ -23,7 +20,7 @@ public class StatsMapperImpl implements StatsMapper {
         statsEntity.setUri(endpointHit.getUri());
         statsEntity.setIp(endpointHit.getIp());
 
-        statsEntity.setStatsTime(LocalDateTime.parse(endpointHit.getTimestamp(), Utils.DATE_FORMATTER));
+        statsEntity.setStatsTime(endpointHit.getTimestamp());
 
         return statsEntity;
     }

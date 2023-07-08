@@ -19,7 +19,7 @@ import java.util.Map;
 @Slf4j
 public class StatsClient extends BaseClient {
     @Autowired
-    public StatsClient(@Value("${stats-service.url}") String serverUrl, RestTemplateBuilder builder) {
+    public StatsClient(@Value("${stats-server.url}") String serverUrl, RestTemplateBuilder builder) {
         super(builder
                 .uriTemplateHandler(new DefaultUriBuilderFactory(serverUrl))
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
@@ -35,7 +35,7 @@ public class StatsClient extends BaseClient {
                 .app(appName)
                 .uri(uri)
                 .ip(ip)
-                .timestamp(timestamp.format(Utils.DATE_FORMATTER))
+                .timestamp(timestamp)
                 .build();
         return post(Utils.HIT, endpointHit);
     }

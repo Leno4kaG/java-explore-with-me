@@ -16,11 +16,7 @@ import ru.practicum.statsclient.StatsClient;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -36,23 +32,23 @@ public class StatsClientITTest {
             .app("APP")
             .uri("/test/uri/1")
             .ip("127.0.0.1")
-            .timestamp("2023-07-05 10:00:00")
+            .timestamp(LocalDateTime.parse("2023-07-05 10:00:00", Utils.DATE_FORMATTER))
             .build();
     private final EndpointHit endpointHit2 = EndpointHit.builder()
             .app("APP2")
             .uri("/test/uri/2")
             .ip("127.0.0.1")
-            .timestamp("2023-07-05 11:00:00")
+            .timestamp(LocalDateTime.parse("2023-07-05 11:00:00", Utils.DATE_FORMATTER))
             .build();
 
     @Test
     public void saveHit() {
         statsClient.saveHit(endpointHit1.getApp(), endpointHit1.getUri(), endpointHit1.getIp(),
-                LocalDateTime.parse(endpointHit1.getTimestamp(), Utils.DATE_FORMATTER));
+                endpointHit1.getTimestamp());
 
         List<ViewStats> stats = statsService.getAllStats(
-                LocalDateTime.parse(endpointHit1.getTimestamp(), Utils.DATE_FORMATTER),
-                LocalDateTime.parse(endpointHit2.getTimestamp(), Utils.DATE_FORMATTER),
+                endpointHit1.getTimestamp(),
+                endpointHit2.getTimestamp(),
                 List.of(endpointHit1.getUri()),
                 false
         );
@@ -73,8 +69,8 @@ public class StatsClientITTest {
         statsService.save(endpointHit2);
 
         ResponseEntity<Object> response = statsClient.getAllStats(
-                LocalDateTime.parse(endpointHit1.getTimestamp(), Utils.DATE_FORMATTER),
-                LocalDateTime.parse(endpointHit2.getTimestamp(), Utils.DATE_FORMATTER)
+                endpointHit1.getTimestamp(),
+                endpointHit2.getTimestamp()
         );
         try {
             List<ViewStats> stats = (mapper.readValue(mapper.writeValueAsString(response.getBody()), new TypeReference<List<ViewStats>>() {

@@ -18,6 +18,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>main-service</module>
 		<module>stats-service</module>
 	</modules>
 	<properties>
@@ -281,5 +282,4 @@
 			</build>
 		</profile>
 	</profiles>
-
 </project>
