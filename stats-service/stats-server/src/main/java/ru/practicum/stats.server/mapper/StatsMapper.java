@@ -3,11 +3,8 @@ package ru.practicum.stats.server.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import ru.practicum.stats.dto.EndpointHit;
-import ru.practicum.stats.dto.Utils;
 import ru.practicum.stats.dto.ViewStats;
 import ru.practicum.stats.server.model.StatsEntity;
-
-import java.time.LocalDateTime;
 
 
 @Mapper(componentModel = "spring")

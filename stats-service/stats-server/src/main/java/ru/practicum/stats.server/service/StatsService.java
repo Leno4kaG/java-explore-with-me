@@ -10,7 +10,6 @@ import ru.practicum.stats.server.mapper.StatsMapper;
 import ru.practicum.stats.server.model.StatsEntity;
 import ru.practicum.stats.server.repository.StatsRepository;
 
-import javax.persistence.Transient;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,8 +47,8 @@ public class StatsService {
 
     @Transactional
     public void save(EndpointHit request) {
-      StatsEntity stats = statsRepository.save(statsMapper.toEntity(request));
-      log.info("Stats {}", stats);
+        StatsEntity stats = statsRepository.save(statsMapper.toEntity(request));
+        log.info("Stats {}", stats);
     }
 
 }
