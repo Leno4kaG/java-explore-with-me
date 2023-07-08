@@ -3,9 +3,11 @@ package ru.practicum.stats.server.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.stats.dto.EndpointHit;
 import ru.practicum.stats.dto.ViewStats;
 import ru.practicum.stats.server.mapper.StatsMapper;
+import ru.practicum.stats.server.model.StatsEntity;
 import ru.practicum.stats.server.repository.StatsRepository;
 
 import javax.persistence.Transient;
@@ -19,7 +21,7 @@ public class StatsService {
     private final StatsRepository statsRepository;
     private final StatsMapper statsMapper;
 
-    @Transient
+    @Transactional
     public List<ViewStats> getAllStats(LocalDateTime start, LocalDateTime end, List<String> uris, boolean unique) {
 
         log.info("Start {} end {} uris {}", start, end, uris);
@@ -44,9 +46,10 @@ public class StatsService {
 
     }
 
-    @Transient
+    @Transactional
     public void save(EndpointHit request) {
-        statsRepository.save(statsMapper.toEntity(request));
+      StatsEntity stats = statsRepository.save(statsMapper.toEntity(request));
+      log.info("Stats {}", stats);
     }
 
 }

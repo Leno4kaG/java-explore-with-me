@@ -40,7 +40,7 @@ public class StatsServiceTest {
             .app("APP")
             .uri("/test/uri/1")
             .ip("127.0.0.1")
-            .timestamp("2023-07-06 12:00:23")
+            .timestamp(LocalDateTime.parse("2023-07-06 12:00:23", Utils.DATE_FORMATTER))
             .build();
 
     private final ViewStats viewStats1 = new ViewStats("APP 1", "/test/uri/1", 1L);
@@ -118,7 +118,7 @@ public class StatsServiceTest {
         assertEquals(endpointHit.getApp(), savedEntity.getApp());
         assertEquals(endpointHit.getUri(), savedEntity.getUri());
         assertEquals(endpointHit.getIp(), savedEntity.getIp());
-        assertEquals(LocalDateTime.parse(endpointHit.getTimestamp(), Utils.DATE_FORMATTER), savedEntity.getStatsTime());
+        assertEquals(endpointHit.getTimestamp(), savedEntity.getStatsTime());
     }
 
 }

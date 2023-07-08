@@ -14,14 +14,11 @@ import java.time.LocalDateTime;
 public interface StatsMapper {
 
 
-    @Mapping(expression = "java(getDate(endpointHit.getTimestamp()))", target = "statsTime")
+    @Mapping(source = "timestamp", target = "statsTime")
     StatsEntity toEntity(EndpointHit endpointHit);
 
     EndpointHit toEndpointHit(StatsEntity entity);
 
     ViewStats toViewStats(StatsEntity entity);
 
-    default LocalDateTime getDate(String date) {
-        return LocalDateTime.parse(date, Utils.DATE_FORMATTER);
-    }
 }

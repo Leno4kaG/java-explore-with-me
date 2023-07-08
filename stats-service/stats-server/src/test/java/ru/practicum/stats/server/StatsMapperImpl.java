@@ -23,7 +23,7 @@ public class StatsMapperImpl implements StatsMapper {
         statsEntity.setUri(endpointHit.getUri());
         statsEntity.setIp(endpointHit.getIp());
 
-        statsEntity.setStatsTime(LocalDateTime.parse(endpointHit.getTimestamp(), Utils.DATE_FORMATTER));
+        statsEntity.setStatsTime(endpointHit.getTimestamp());
 
         return statsEntity;
     }

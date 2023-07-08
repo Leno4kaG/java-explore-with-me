@@ -51,7 +51,7 @@ public class StatsControllerTest {
                     .app("APP")
                     .uri("/test/uri/1")
                     .ip("127.0.0.1")
-                    .timestamp("2023-01-06 10:00:00")
+                    .timestamp(LocalDateTime.parse("2023-01-06 10:00:00", Utils.DATE_FORMATTER))
                     .build();
         }
 
@@ -180,28 +180,6 @@ public class StatsControllerTest {
         @Test
         public void saveIsErrorWhenTimestampIsNullOrEmpty() throws Exception {
             endpointHit.setTimestamp(null);
-
-            mvc.perform(post(Utils.HIT)
-                            .content(mapper.writeValueAsString(endpointHit))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(statsService, never()).save(any());
-
-            endpointHit.setTimestamp("");
-
-            mvc.perform(post(Utils.HIT)
-                            .content(mapper.writeValueAsString(endpointHit))
-                            .characterEncoding(StandardCharsets.UTF_8)
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .accept(MediaType.APPLICATION_JSON))
-                    .andExpect(status().isBadRequest());
-
-            verify(statsService, never()).save(any());
-
-            endpointHit.setTimestamp(" ");
 
             mvc.perform(post(Utils.HIT)
                             .content(mapper.writeValueAsString(endpointHit))
