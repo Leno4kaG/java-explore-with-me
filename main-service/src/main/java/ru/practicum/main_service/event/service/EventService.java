@@ -244,9 +244,6 @@ public class EventService {
                 text, categories, paid, rangeStart, rangeEnd, onlyAvailable, sort, from, size);
 
         checkStartIsBeforeEnd(rangeStart, rangeEnd);
-        if (rangeStart == null && rangeEnd == null) {
-            rangeStart = rangeEnd = LocalDateTime.now();
-        }
 
         List<Event> events = eventRepository.findAllForPublic(text, categories,
                 paid, rangeStart, rangeEnd, from, size);

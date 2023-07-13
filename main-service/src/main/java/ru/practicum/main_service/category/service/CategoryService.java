@@ -70,12 +70,4 @@ public class CategoryService {
 
         categoryRepository.deleteById(catId);
     }
-
-    @Transactional(readOnly = true)
-    public Category getCategoryById(Long catId) {
-        log.info("Вывод категории с id {}", catId);
-
-        return categoryRepository.findById(catId)
-                .orElseThrow(() -> new NotFoundException("Категория с таким id не найдена."));
-    }
 }
