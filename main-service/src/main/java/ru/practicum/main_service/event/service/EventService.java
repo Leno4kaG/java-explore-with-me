@@ -23,10 +23,12 @@ import ru.practicum.main_service.event.mapper.EventMapper;
 import ru.practicum.main_service.event.mapper.LocationMapper;
 import ru.practicum.main_service.exception.ForbiddenException;
 import ru.practicum.main_service.exception.NotFoundException;
+import ru.practicum.main_service.exception.ValidationException;
 import ru.practicum.main_service.user.domain.model.User;
 import ru.practicum.main_service.user.domain.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -356,7 +358,7 @@ public class EventService {
 
     private void checkStartIsBeforeEnd(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
-            throw new RuntimeException(String.format("Field: eventDate. Error: некорректные параметры временного " +
+            throw new ValidationException(String.format("Field: eventDate. Error: некорректные параметры временного " +
                     "интервала. Value: rangeStart = %s, rangeEnd = %s", rangeStart, rangeEnd));
         }
     }

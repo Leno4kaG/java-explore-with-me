@@ -33,6 +33,7 @@ import ru.practicum.main_service.event.mapper.EventMapperImpl;
 import ru.practicum.main_service.event.mapper.LocationMapperImpl;
 import ru.practicum.main_service.exception.ForbiddenException;
 import ru.practicum.main_service.exception.NotFoundException;
+import ru.practicum.main_service.exception.ValidationException;
 import ru.practicum.main_service.user.domain.model.User;
 import ru.practicum.main_service.user.domain.repository.UserRepository;
 import ru.practicum.main_service.user.dto.UserShortDto;
@@ -273,7 +274,7 @@ public class EventServiceTest {
 
         @Test
         public void getEventsByAdminWhenErrorTimeRange() {
-            RuntimeException exception = assertThrows(RuntimeException.class,
+            ValidationException exception = assertThrows(ValidationException.class,
                     () -> eventService.getEventsByAdmin(List.of(event1.getInitiator().getId()),
                             List.of(event1.getState()), List.of(event1.getCategory().getId()), event1.getCreatedOn(),
                             event1.getCreatedOn().minusMinutes(5), 0, 10));

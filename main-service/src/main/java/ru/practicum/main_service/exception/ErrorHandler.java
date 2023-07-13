@@ -31,6 +31,17 @@ public class ErrorHandler {
                 LocalDateTime.now().format(Utils.DATE_FORMATTER));
     }
 
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleValidationException(final ValidationException exception) {
+        log.error(exception.toString());
+        return new ApiError(HttpStatus.BAD_REQUEST.name(),
+                "Bad request.",
+                exception.getMessage(),
+                ExceptionUtils.getStackTrace(exception),
+                LocalDateTime.now().format(Utils.DATE_FORMATTER));
+    }
+
     @ExceptionHandler({MethodArgumentTypeMismatchException.class, ConstraintViolationException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiError handleValidationException(final RuntimeException exception) {
