@@ -3,7 +3,6 @@ package ru.practicum.main_service.event.service;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -240,8 +239,9 @@ public class EventServiceTest {
         views = new HashMap<>();
         views.put(event1.getId(), eventShortDto1.getViews());
     }
+
     @AfterEach
-    public void clear(){
+    public void clear() {
         confirmedRequests.clear();
         views.clear();
     }
@@ -472,75 +472,76 @@ public class EventServiceTest {
     }
 
 
-        @Nested
-        class EditByAdmin {
-            @BeforeEach
-            public void beforeEach() {
-                updateEventAdminRequest = UpdateEventAdminRequest.builder()
-                        .title("updated test title 1")
-                        .annotation("updated test annotation 1")
-                        .description("updated test description 1")
-                        .eventDate(LocalDateTime.now().plusDays(5))
-                        .category(updatedCategory.getId())
-                        .location(updatedLocationDto)
-                        .paid(true)
-                        .participantLimit(50)
-                        .requestModeration(true)
-                        .stateAction(EventStateAction.PUBLISH_EVENT)
-                        .build();
-                updatedEvent1 = Event.builder()
-                        .id(1L)
-                        .title(updateEventAdminRequest.getTitle())
-                        .annotation(updateEventAdminRequest.getAnnotation())
-                        .description(updateEventAdminRequest.getDescription())
-                        .eventDate(updateEventAdminRequest.getEventDate())
-                        .category(updatedCategory)
-                        .location(updatedLocation)
-                        .paid(updateEventAdminRequest.getPaid())
-                        .participantLimit(updateEventAdminRequest.getParticipantLimit())
-                        .requestModeration(updateEventAdminRequest.getRequestModeration())
-                        .initiator(event1.getInitiator())
-                        .state(EventState.PUBLISHED)
-                        .createdOn(event1.getCreatedOn())
-                        .publishedOn(LocalDateTime.now())
-                        .build();
-                views.put(event1.getId(), eventFullDto1.getViews());
-            }
+    @Nested
+    class EditByAdmin {
+        @BeforeEach
+        public void beforeEach() {
+            updateEventAdminRequest = UpdateEventAdminRequest.builder()
+                    .title("updated test title 1")
+                    .annotation("updated test annotation 1")
+                    .description("updated test description 1")
+                    .eventDate(LocalDateTime.now().plusDays(5))
+                    .category(updatedCategory.getId())
+                    .location(updatedLocationDto)
+                    .paid(true)
+                    .participantLimit(50)
+                    .requestModeration(true)
+                    .stateAction(EventStateAction.PUBLISH_EVENT)
+                    .build();
+            updatedEvent1 = Event.builder()
+                    .id(1L)
+                    .title(updateEventAdminRequest.getTitle())
+                    .annotation(updateEventAdminRequest.getAnnotation())
+                    .description(updateEventAdminRequest.getDescription())
+                    .eventDate(updateEventAdminRequest.getEventDate())
+                    .category(updatedCategory)
+                    .location(updatedLocation)
+                    .paid(updateEventAdminRequest.getPaid())
+                    .participantLimit(updateEventAdminRequest.getParticipantLimit())
+                    .requestModeration(updateEventAdminRequest.getRequestModeration())
+                    .initiator(event1.getInitiator())
+                    .state(EventState.PUBLISHED)
+                    .createdOn(event1.getCreatedOn())
+                    .publishedOn(LocalDateTime.now())
+                    .build();
+            views.put(event1.getId(), eventFullDto1.getViews());
+        }
 
-            @Test
-            public void editEventByAdmin() {
-                confirmedRequests.put(event1.getId(), eventFullDto1.getConfirmedRequests());
+        @Test
+        public void editEventByAdmin() {
+            confirmedRequests.put(event1.getId(), eventFullDto1.getConfirmedRequests());
 
-                when(eventRepository.findById(anyLong())).thenReturn(Optional.of(event1));
-                when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(updatedCategory));
-                when(locationMapper.toLocation(any())).thenCallRealMethod();
-                when(locationRepository.findByLatAndLon(updatedLocationDto.getLat(), updatedLocationDto.getLon()))
-                        .thenReturn(Optional.empty());
-                when(locationRepository.save(any())).thenReturn(updatedLocation);
-                when(statsService.getConfirmedRequests(any())).thenReturn(confirmedRequests);
-                when(eventRepository.save(any())).thenReturn(updatedEvent1);
-                when(statsService.getViews(any())).thenReturn(views);
-                when(eventMapper.toEventFullDto(any(), any(), any())).thenReturn(eventFullDto1);
+            when(eventRepository.findById(anyLong())).thenReturn(Optional.of(event1));
+            when(categoryRepository.findById(anyLong())).thenReturn(Optional.of(updatedCategory));
+            when(locationMapper.toLocation(any())).thenCallRealMethod();
+            when(locationRepository.findByLatAndLon(updatedLocationDto.getLat(), updatedLocationDto.getLon()))
+                    .thenReturn(Optional.empty());
+            when(locationRepository.save(any())).thenReturn(updatedLocation);
+            when(statsService.getConfirmedRequests(any())).thenReturn(confirmedRequests);
+            when(eventRepository.save(any())).thenReturn(updatedEvent1);
+            when(statsService.getViews(any())).thenReturn(views);
+            when(eventMapper.toEventFullDto(any(), any(), any())).thenReturn(eventFullDto1);
 
-                EventFullDto eventFullDto = eventService.editEventByAdmin(event1.getId(), updateEventAdminRequest);
+            EventFullDto eventFullDto = eventService.editEventByAdmin(event1.getId(), updateEventAdminRequest);
 
-                assertEquals(eventFullDto1, eventFullDto);
+            assertEquals(eventFullDto1, eventFullDto);
 
-                verify(eventRepository, times(1)).findById(any());
-                verify(categoryRepository, times(1)).findById(any());
-                verify(locationMapper, times(1)).toLocation(any());
-                verify(locationRepository, times(1)).findByLatAndLon(any(), any());
-                verify(locationRepository, times(1)).save(any());
-                verify(statsService, times(2)).getConfirmedRequests(any());
-                verify(eventRepository, times(1)).save(eventArgumentCaptor.capture());
-                verify(statsService, times(1)).getViews(any());
-                verify(eventMapper, times(1)).toEventFullDto(any(), any(), any());
+            verify(eventRepository, times(1)).findById(any());
+            verify(categoryRepository, times(1)).findById(any());
+            verify(locationMapper, times(1)).toLocation(any());
+            verify(locationRepository, times(1)).findByLatAndLon(any(), any());
+            verify(locationRepository, times(1)).save(any());
+            verify(statsService, times(2)).getConfirmedRequests(any());
+            verify(eventRepository, times(1)).save(eventArgumentCaptor.capture());
+            verify(statsService, times(1)).getViews(any());
+            verify(eventMapper, times(1)).toEventFullDto(any(), any(), any());
 
-                Event savedEvent = eventArgumentCaptor.getValue();
+            Event savedEvent = eventArgumentCaptor.getValue();
 
-                checkResults(updatedEvent1, savedEvent);
-            }
+            checkResults(updatedEvent1, savedEvent);
+        }
     }
+
     @Nested
     class GetAllEventsByPrivate {
         @Test

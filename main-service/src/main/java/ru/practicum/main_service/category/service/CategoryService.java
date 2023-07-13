@@ -30,6 +30,7 @@ public class CategoryService {
 
         return categoryMapper.toCategoryDto(categoryRepository.save(categoryMapper.newCategoryDtoToCategory(newCategoryDto)));
     }
+
     @Transactional(readOnly = true)
     public List<CategoryDto> getAll(Pageable pageable) {
         log.info("Получение всех категорий {}", pageable);
@@ -38,6 +39,7 @@ public class CategoryService {
                 .map(categoryMapper::toCategoryDto)
                 .collect(Collectors.toList());
     }
+
     @Transactional(readOnly = true)
     public CategoryDto getById(Long catId) {
         log.info("Получение категории по id {}", catId);
@@ -68,6 +70,7 @@ public class CategoryService {
 
         categoryRepository.deleteById(catId);
     }
+
     @Transactional(readOnly = true)
     public Category getCategoryById(Long catId) {
         log.info("Вывод категории с id {}", catId);

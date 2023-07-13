@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -218,7 +217,7 @@ public class RequestRepositoryTest {
         }
 
         @Test
-        public void FindByEventIdAndRequesterIdWhenEmpty() {
+        public void findByEventIdAndRequesterIdWhenEmpty() {
             Optional<Request> optionalRequest = requestRepository.findByEventIdAndRequesterId(event2.getId(), user3.getId());
 
             assertTrue(optionalRequest.isEmpty());

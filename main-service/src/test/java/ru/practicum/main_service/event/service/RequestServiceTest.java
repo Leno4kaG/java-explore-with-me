@@ -9,19 +9,11 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import ru.practicum.main_service.category.domain.model.Category;
-import ru.practicum.main_service.compilation.domain.model.Compilation;
-import ru.practicum.main_service.compilation.dto.CompilationDto;
-import ru.practicum.main_service.compilation.dto.NewCompilationDto;
-import ru.practicum.main_service.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.main_service.event.domain.model.Event;
 import ru.practicum.main_service.event.domain.model.Request;
 import ru.practicum.main_service.event.domain.repository.RequestRepository;
 import ru.practicum.main_service.event.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.main_service.event.dto.EventRequestStatusUpdateResult;
-import ru.practicum.main_service.event.dto.EventShortDto;
 import ru.practicum.main_service.event.dto.ParticipationRequestDto;
 import ru.practicum.main_service.event.enums.EventState;
 import ru.practicum.main_service.event.enums.RequestStatus;
@@ -49,18 +41,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ru.practicum.main_service.event.test_data.EventTestData.event1;
-import static ru.practicum.main_service.event.test_data.EventTestData.event2;
-import static ru.practicum.main_service.event.test_data.EventTestData.event3;
-import static ru.practicum.main_service.event.test_data.EventTestData.participationRequestDto1;
-import static ru.practicum.main_service.event.test_data.EventTestData.participationRequestDto2;
-import static ru.practicum.main_service.event.test_data.EventTestData.participationRequestDto4;
-import static ru.practicum.main_service.event.test_data.EventTestData.request1;
-import static ru.practicum.main_service.event.test_data.EventTestData.request2;
-import static ru.practicum.main_service.event.test_data.EventTestData.request3;
-import static ru.practicum.main_service.event.test_data.EventTestData.request4;
-import static ru.practicum.main_service.event.test_data.EventTestData.user1;
-import static ru.practicum.main_service.event.test_data.EventTestData.user2;
 
 
 @ExtendWith(MockitoExtension.class)

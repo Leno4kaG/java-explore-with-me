@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,8 +15,7 @@ import javax.validation.constraints.NotBlank;
 @Setter
 public class CategoryDto {
 
-    Long id;
-
+    private Long id;
     @NotBlank
-    String name;
+    private String name;
 }
