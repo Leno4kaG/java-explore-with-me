@@ -398,7 +398,7 @@ public class EventServiceTest {
         public void editEventByAdminWhenNewEventDateNotValid() {
             updateEventAdminRequest.setEventDate(LocalDateTime.now());
 
-            ForbiddenException exception = assertThrows(ForbiddenException.class,
+            ValidationException exception = assertThrows(ValidationException.class,
                     () -> eventService.editEventByAdmin(event1.getId(), updateEventAdminRequest));
             assertEquals(String.format("Field: eventDate. Error: остается слишком мало времени для " +
                     "подготовки. Value: %s", updateEventAdminRequest.getEventDate()), exception.getMessage());
@@ -617,7 +617,7 @@ public class EventServiceTest {
         public void createEventByPrivateWhenEventDateNotValid() {
             newEventDto.setEventDate(LocalDateTime.now());
 
-            ForbiddenException exception = assertThrows(ForbiddenException.class,
+            ValidationException exception = assertThrows(ValidationException.class,
                     () -> eventService.createEventByPrivate(event1.getInitiator().getId(), newEventDto));
             assertEquals(String.format("Field: eventDate. Error: остается слишком мало времени для " +
                     "подготовки. Value: %s", newEventDto.getEventDate()), exception.getMessage());
@@ -778,7 +778,7 @@ public class EventServiceTest {
         public void editWhenNewEventDateNotValid() {
             updateEventUserRequest.setEventDate(LocalDateTime.now());
 
-            ForbiddenException exception = assertThrows(ForbiddenException.class,
+            ValidationException exception = assertThrows(ValidationException.class,
                     () -> eventService.editEventByPrivate(event1.getInitiator().getId(), event1.getId(),
                             updateEventUserRequest));
             assertEquals(String.format("Field: eventDate. Error: остается слишком мало времени для " +

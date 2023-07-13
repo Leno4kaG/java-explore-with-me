@@ -364,7 +364,7 @@ public class EventService {
 
     private void checkNewEventDate(LocalDateTime newEventDate, LocalDateTime minTimeBeforeEventStart) {
         if (newEventDate != null && newEventDate.isBefore(minTimeBeforeEventStart)) {
-            throw new ForbiddenException(String.format("Field: eventDate. Error: остается слишком мало времени для " +
+            throw new ValidationException(String.format("Field: eventDate. Error: остается слишком мало времени для " +
                     "подготовки. Value: %s", newEventDate));
         }
     }

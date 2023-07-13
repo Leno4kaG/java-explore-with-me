@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 
 @Builder
 @EqualsAndHashCode
@@ -19,5 +20,6 @@ public class CategoryDto {
 
     private Long id;
     @NotBlank
+    @Size(max = 50)
     private String name;
 }
