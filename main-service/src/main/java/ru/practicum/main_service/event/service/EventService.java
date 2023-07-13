@@ -28,7 +28,6 @@ import ru.practicum.main_service.user.domain.model.User;
 import ru.practicum.main_service.user.domain.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.ConstraintViolationException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
