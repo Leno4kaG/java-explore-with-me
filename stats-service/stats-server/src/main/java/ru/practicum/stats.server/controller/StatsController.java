@@ -30,6 +30,9 @@ public class StatsController {
                                       @RequestParam(name = "end") @DateTimeFormat(pattern = Utils.DATE_FORMAT) LocalDateTime end,
                                       @RequestParam(name = "uris", required = false) List<String> uris,
                                       @RequestParam(name = "unique", defaultValue = "false") boolean unique) {
+        if (start.isAfter(end)) {
+            throw new IllegalArgumentException("Недопустимый временной промежуток.");
+        }
         return statsService.getAllStats(start, end, uris, unique);
     }
 
