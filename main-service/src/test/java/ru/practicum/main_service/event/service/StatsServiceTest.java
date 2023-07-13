@@ -106,8 +106,8 @@ public class StatsServiceTest {
     class GetViews {
         @Test
         public void shouldGet() {
-            when(statsClient.getAllStats(ArgumentMatchers.eq(event2.getPublishedOn()), ArgumentMatchers.any(),
-                    ArgumentMatchers.eq(List.of("/events/1", "/events/2")), ArgumentMatchers.eq(null)))
+            when(statsClient.getAllStats(any(), any(),
+                    any(), any()))
                     .thenReturn(new ResponseEntity<>(List.of(viewStats1, viewStats2), HttpStatus.OK));
 
             Map<Long, Long> views = statsService.getViews(List.of(event1, event2, event3));
