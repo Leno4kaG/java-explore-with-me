@@ -10,14 +10,22 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import ru.practicum.main_service.category.domain.model.Category;
 import ru.practicum.main_service.compilation.domain.model.Compilation;
 import ru.practicum.main_service.compilation.domain.repository.CompilationRepository;
 import ru.practicum.main_service.compilation.dto.CompilationDto;
+import ru.practicum.main_service.compilation.dto.NewCompilationDto;
+import ru.practicum.main_service.compilation.dto.UpdateCompilationRequest;
 import ru.practicum.main_service.compilation.mapper.CompilationMapperImpl;
 import ru.practicum.main_service.compilation.service.CompilationService;
+import ru.practicum.main_service.event.domain.model.Event;
 import ru.practicum.main_service.event.domain.repository.EventRepository;
+import ru.practicum.main_service.event.dto.EventShortDto;
 import ru.practicum.main_service.event.service.EventService;
 import ru.practicum.main_service.exception.NotFoundException;
+import ru.practicum.main_service.user.domain.model.User;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +38,6 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static ru.practicum.main_service.compilation.EventTestData.*;
 
 @ExtendWith(MockitoExtension.class)
 public class CompilationServiceTest {
@@ -51,6 +58,93 @@ public class CompilationServiceTest {
 
     @Captor
     private ArgumentCaptor<Compilation> compilationArgumentCaptor;
+
+    private final Pageable pageable = PageRequest.of(0 / 10, 10);
+    private final User user1 = User.builder()
+            .id(1L)
+            .build();
+    private final User user2 = User.builder()
+            .id(2L)
+            .build();
+    private final Category category1 = Category.builder()
+            .id(1L)
+            .name("category 1")
+            .build();
+    private final Category category2 = Category.builder()
+            .id(2L)
+            .name("category 2")
+            .build();
+    private final NewCompilationDto newCompilationDto1 = NewCompilationDto.builder()
+            .title("title 1")
+            .pinned(false)
+            .events(List.of(1L, 2L))
+            .build();
+    private final NewCompilationDto newCompilationDto2 = NewCompilationDto.builder()
+            .title("title 2")
+            .pinned(true)
+            .events(List.of())
+            .build();
+    private final UpdateCompilationRequest updateCompilationRequest1 = UpdateCompilationRequest.builder()
+            .title("title update")
+            .pinned(true)
+            .events(List.of(1L))
+            .build();
+    private final Event event1 = Event.builder()
+            .id(1L)
+            .category(category1)
+            .initiator(user1)
+            .build();
+    private final Event event2 = Event.builder()
+            .id(2L)
+            .category(category2)
+            .initiator(user2)
+            .build();
+    private final EventShortDto eventShortDto1 = EventShortDto.builder()
+            .id(event1.getId())
+            .views(0L)
+            .confirmedRequests(10L)
+            .build();
+    private final EventShortDto eventShortDto2 = EventShortDto.builder()
+            .id(event2.getId())
+            .views(10L)
+            .confirmedRequests(0L)
+            .build();
+    private final Compilation compilation1 = Compilation.builder()
+            .id(1L)
+            .title(newCompilationDto1.getTitle())
+            .pinned(newCompilationDto1.getPinned())
+            .events(List.of(event1, event2))
+            .build();
+    private final Compilation compilation2 = Compilation.builder()
+            .id(2L)
+            .title(newCompilationDto2.getTitle())
+            .pinned(newCompilationDto2.getPinned())
+            .events(List.of())
+            .build();
+    private final Compilation updatedCompilation1 = Compilation.builder()
+            .id(compilation1.getId())
+            .title(updateCompilationRequest1.getTitle())
+            .pinned(updateCompilationRequest1.getPinned())
+            .events(List.of(event1))
+            .build();
+    private final CompilationDto compilationDto1 = CompilationDto.builder()
+            .id(compilation1.getId())
+            .title(compilation1.getTitle())
+            .pinned(compilation1.getPinned())
+            .events(List.of(eventShortDto1, eventShortDto2))
+            .build();
+    private final CompilationDto compilationDto2 = CompilationDto.builder()
+            .id(compilation2.getId())
+            .title(compilation2.getTitle())
+            .pinned(compilation2.getPinned())
+            .events(List.of())
+            .build();
+    private final CompilationDto updatedCompilationDto1 = CompilationDto.builder()
+            .id(updatedCompilation1.getId())
+            .title(updatedCompilation1.getTitle())
+            .pinned(updatedCompilation1.getPinned())
+            .events(List.of(eventShortDto1))
+            .build();
 
     @Test
     public void addCompilation() {
