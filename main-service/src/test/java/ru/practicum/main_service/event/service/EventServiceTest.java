@@ -273,7 +273,7 @@ public class EventServiceTest {
 
         @Test
         public void getEventsByAdminWhenErrorTimeRange() {
-            ForbiddenException exception = assertThrows(ForbiddenException.class,
+            RuntimeException exception = assertThrows(RuntimeException.class,
                     () -> eventService.getEventsByAdmin(List.of(event1.getInitiator().getId()),
                             List.of(event1.getState()), List.of(event1.getCategory().getId()), event1.getCreatedOn(),
                             event1.getCreatedOn().minusMinutes(5), 0, 10));
@@ -845,7 +845,7 @@ public class EventServiceTest {
 
         @Test
         public void findAllForPublicWhenErrorTimeRange() {
-            ForbiddenException exception = assertThrows(ForbiddenException.class,
+            RuntimeException exception = assertThrows(RuntimeException.class,
                     () -> eventService.getEventsByPublic("some text", List.of(event1.getCategory().getId()),
                             false, event1.getCreatedOn(), event1.getCreatedOn().minusMinutes(5), true,
                             EventSortType.EVENT_DATE, 0, 10, new MockHttpServletRequest()));

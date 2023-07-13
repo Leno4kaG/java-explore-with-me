@@ -356,7 +356,7 @@ public class EventService {
 
     private void checkStartIsBeforeEnd(LocalDateTime rangeStart, LocalDateTime rangeEnd) {
         if (rangeStart != null && rangeEnd != null && rangeStart.isAfter(rangeEnd)) {
-            throw new ForbiddenException(String.format("Field: eventDate. Error: некорректные параметры временного " +
+            throw new RuntimeException(String.format("Field: eventDate. Error: некорректные параметры временного " +
                     "интервала. Value: rangeStart = %s, rangeEnd = %s", rangeStart, rangeEnd));
         }
     }

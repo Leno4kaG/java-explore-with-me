@@ -20,7 +20,7 @@ import java.util.List;
 @Builder
 public class NewCompilationDto {
     @NotBlank
-    @Size(min = 3, max = 120)
+    @Size(min = 3, max = 50)
     private String title;
     private Boolean pinned = false;
     private List<Long> events = new ArrayList<>();
