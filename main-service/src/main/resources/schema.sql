@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS events
     title VARCHAR(120) NOT NULL,
     category_id BIGINT REFERENCES categories (id),
     user_id BIGINT REFERENCES users (id) ON DELETE CASCADE,
-    location_id BIGINT REFERENCES locations (id)
+    location_id BIGINT REFERENCES locations (id),
+    CONSTRAINT fk_events_to_users FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE IF NOT EXISTS requests
@@ -55,5 +56,8 @@ CREATE TABLE IF NOT EXISTS compilations
 CREATE TABLE IF NOT EXISTS compilations_events
 (
     compilation_id BIGINT REFERENCES compilations (id) ON DELETE CASCADE,
-    event_id BIGINT REFERENCES events (id) ON DELETE CASCADE
+    event_id BIGINT REFERENCES events (id) ON DELETE CASCADE,
+    CONSTRAINT fk_events_compilations_to_events FOREIGN KEY (event_id) REFERENCES events (id),
+    CONSTRAINT fk_events_compilations_to_compilations FOREIGN KEY (compilation_id) REFERENCES compilations (id),
+    primary key (event_id, compilation_id)
 );

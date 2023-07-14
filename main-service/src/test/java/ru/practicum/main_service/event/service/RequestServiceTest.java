@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.main_service.event.domain.model.Event;
 import ru.practicum.main_service.event.domain.model.Request;
+import ru.practicum.main_service.event.domain.repository.EventRepository;
 import ru.practicum.main_service.event.domain.repository.RequestRepository;
 import ru.practicum.main_service.event.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.main_service.event.dto.EventRequestStatusUpdateResult;
@@ -22,7 +23,7 @@ import ru.practicum.main_service.event.mapper.RequestMapperImpl;
 import ru.practicum.main_service.exception.ForbiddenException;
 import ru.practicum.main_service.exception.NotFoundException;
 import ru.practicum.main_service.user.domain.model.User;
-import ru.practicum.main_service.user.service.UserService;
+import ru.practicum.main_service.user.domain.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -46,10 +47,10 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class RequestServiceTest {
     @Mock
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Mock
-    private EventService eventService;
+    private EventRepository eventRepository;
 
     @Mock
     private StatsService statsService;
@@ -170,7 +171,7 @@ public class RequestServiceTest {
     class GetEventRequestsByRequester {
         @Test
         public void getEvent() {
-            when(userService.getUserById(anyLong())).thenReturn(user2);
+            when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
             when(requestRepository.findAllByRequesterId(anyLong())).thenReturn(List.of(request1, request4));
             when(requestMapper.toParticipationRequestDto(any())).thenCallRealMethod();
 
@@ -184,21 +185,21 @@ public class RequestServiceTest {
             assertEquals(participationRequestDto1, participationFromRepository1);
             assertEquals(participationRequestDto4, participationFromRepository2);
 
-            verify(userService, times(1)).getUserById(any());
+            verify(userRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByRequesterId(any());
             verify(requestMapper, times(2)).toParticipationRequestDto(any());
         }
 
         @Test
         public void getEvenWhenEmptyEmpty() {
-            when(userService.getUserById(user1.getId())).thenReturn(user1);
+            when(userRepository.findById(anyLong())).thenReturn(Optional.of(user1));
             when(requestRepository.findAllByRequesterId(user1.getId())).thenReturn(List.of());
 
             List<ParticipationRequestDto> participationRequestsDto = requestService.getEventRequestsByRequester(user1.getId());
 
             assertTrue(participationRequestsDto.isEmpty());
 
-            verify(userService, times(1)).getUserById(any());
+            verify(userRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByRequesterId(any());
             verify(requestMapper, times(0)).toParticipationRequestDto(any());
         }
@@ -214,8 +215,8 @@ public class RequestServiceTest {
 
         @Test
         public void createReqPending() {
-            when(userService.getUserById(any())).thenReturn(user2);
-            when(eventService.getEventById(anyLong())).thenReturn(event2);
+            when(userRepository.findById(any())).thenReturn(Optional.of(user2));
+            when(eventRepository.findById(anyLong())).thenReturn(Optional.of(event2));
             when(requestRepository.findByEventIdAndRequesterId(anyLong(), anyLong())).thenReturn(Optional.empty());
             when(statsService.getConfirmedRequests(any())).thenReturn(new HashMap<>());
             when(requestRepository.save(any())).thenReturn(request4);
@@ -225,8 +226,8 @@ public class RequestServiceTest {
 
             assertEquals(participationRequestDto4, participationRequestDto);
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(userRepository, times(1)).findById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findByEventIdAndRequesterId(any(), any());
             verify(statsService, times(1)).getConfirmedRequests(any());
             verify(requestRepository, times(1)).save(requestArgumentCaptor.capture());
@@ -243,8 +244,8 @@ public class RequestServiceTest {
 
         @Test
         public void createConfirmed() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(eventService.getEventById(event3.getId())).thenReturn(event3);
+            when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+            when(eventRepository.findById(event3.getId())).thenReturn(Optional.of(event3));
             when(requestRepository.findByEventIdAndRequesterId(event3.getId(), user2.getId())).thenReturn(Optional.empty());
             when(statsService.getConfirmedRequests(List.of(event3))).thenReturn(new HashMap<>());
             when(requestRepository.save(any())).thenReturn(request2);
@@ -254,8 +255,8 @@ public class RequestServiceTest {
 
             assertEquals(participationRequestDto2, participationRequestDto);
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(userRepository, times(1)).findById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findByEventIdAndRequesterId(any(), any());
             verify(statsService, times(1)).getConfirmedRequests(any());
             verify(requestRepository, times(1)).save(requestArgumentCaptor.capture());
@@ -272,36 +273,36 @@ public class RequestServiceTest {
 
         @Test
         public void creteEventWhenEventOwner() {
-            when(userService.getUserById(user1.getId())).thenReturn(user1);
-            when(eventService.getEventById(event2.getId())).thenReturn(event2);
+            when(userRepository.findById(user1.getId())).thenReturn(Optional.of(user1));
+            when(eventRepository.findById(event2.getId())).thenReturn(Optional.of(event2));
 
             ForbiddenException exception = assertThrows(ForbiddenException.class,
                     () -> requestService.createEventRequest(user1.getId(), event2.getId()));
             assertEquals("Запрос на собственное событие создавать запрещено.", exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(userRepository, times(1)).findById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, never()).save(any());
         }
 
         @Test
         public void createEvenWhenEventNotPublished() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(eventService.getEventById(event1.getId())).thenReturn(event1);
+            when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+            when(eventRepository.findById(event1.getId())).thenReturn(Optional.of(event1));
 
             ForbiddenException exception = assertThrows(ForbiddenException.class,
                     () -> requestService.createEventRequest(user2.getId(), event1.getId()));
             assertEquals("На неопубликованное событие запрос создавать запрещено.", exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(userRepository, times(1)).findById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, never()).save(any());
         }
 
         @Test
         public void createEventWhenRequestedDouble() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(eventService.getEventById(event2.getId())).thenReturn(event2);
+            when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+            when(eventRepository.findById(event2.getId())).thenReturn(Optional.of(event2));
             when(requestRepository.findByEventIdAndRequesterId(event2.getId(), user2.getId()))
                     .thenReturn(Optional.ofNullable(request4));
 
@@ -309,16 +310,16 @@ public class RequestServiceTest {
                     () -> requestService.createEventRequest(user2.getId(), event2.getId()));
             assertEquals("Создавать повторный запрос запрещено.", exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(userRepository, times(1)).findById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findByEventIdAndRequesterId(any(), any());
             verify(requestRepository, never()).save(any());
         }
 
         @Test
         public void shouldTrowExceptionIfLimitReached() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(eventService.getEventById(event2.getId())).thenReturn(event2);
+            when(userRepository.findById(user2.getId())).thenReturn(Optional.of(user2));
+            when(eventRepository.findById(event2.getId())).thenReturn(Optional.of(event2));
             when(requestRepository.findByEventIdAndRequesterId(event2.getId(), user2.getId())).thenReturn(Optional.empty());
             when(statsService.getConfirmedRequests(List.of(event2))).thenReturn(confirmedRequests);
 
@@ -327,8 +328,8 @@ public class RequestServiceTest {
             assertEquals(String.format("Достигнут лимит подтвержденных запросов на участие: %s",
                     event2.getParticipantLimit()), exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(userRepository, times(1)).findById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findByEventIdAndRequesterId(any(), any());
             verify(statsService, times(1)).getConfirmedRequests(any());
             verify(requestRepository, never()).save(any());
@@ -339,8 +340,8 @@ public class RequestServiceTest {
     class CancelEventRequest {
         @Test
         public void cancelReq() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(requestRepository.findById(request4.getId())).thenReturn(Optional.of(request4));
+            when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+            when(requestRepository.findById(anyLong())).thenReturn(Optional.of(request4));
             when(requestRepository.save(any())).thenReturn(request4);
             when(requestMapper.toParticipationRequestDto(any())).thenCallRealMethod();
 
@@ -352,7 +353,7 @@ public class RequestServiceTest {
             assertEquals(RequestStatus.CANCELED, participationRequestDto.getStatus());
             assertEquals(participationRequestDto4.getCreated(), participationRequestDto.getCreated());
 
-            verify(userService, times(1)).getUserById(any());
+            verify(userRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).save(requestArgumentCaptor.capture());
             verify(requestMapper, times(1)).toParticipationRequestDto(any());
@@ -368,28 +369,28 @@ public class RequestServiceTest {
 
         @Test
         public void cancelReqWhenRequestNotFound() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(requestRepository.findById(request4.getId())).thenReturn(Optional.empty());
+            when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+            when(requestRepository.findById(anyLong())).thenReturn(Optional.empty());
 
             NotFoundException exception = assertThrows(NotFoundException.class,
                     () -> requestService.cancelEventRequest(user2.getId(), request4.getId()));
             assertEquals("Заявки на участие с таким id не найдено.", exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
+            verify(userRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findById(any());
             verify(requestRepository, never()).save(any());
         }
 
         @Test
         public void cancelReqWhenUserNotRequestOwner() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(requestRepository.findById(request3.getId())).thenReturn(Optional.of(request3));
+            when(userRepository.findById(anyLong())).thenReturn(Optional.of(user2));
+            when(requestRepository.findById(anyLong())).thenReturn(Optional.of(request3));
 
             ForbiddenException exception = assertThrows(ForbiddenException.class,
                     () -> requestService.cancelEventRequest(user2.getId(), request3.getId()));
             assertEquals("Пользователь не является владельцем.", exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
+            verify(userRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findById(any());
             verify(requestRepository, never()).save(any());
         }
@@ -399,8 +400,7 @@ public class RequestServiceTest {
     class GetEventRequestsByEventOwner {
         @Test
         public void getEventReqByEventOwner() {
-            when(userService.getUserById(user1.getId())).thenReturn(user1);
-            when(eventService.getEventById(event1.getId())).thenReturn(event1);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event1));
             when(requestRepository.findAllByEventId(event1.getId())).thenReturn(List.of(request1, request3));
             when(requestMapper.toParticipationRequestDto(any())).thenCallRealMethod();
 
@@ -408,39 +408,34 @@ public class RequestServiceTest {
 
             assertEquals(2, participationRequestsDto.size());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByEventId(any());
             verify(requestMapper, times(2)).toParticipationRequestDto(any());
         }
 
         @Test
         public void getEventReqByEventOwnerWhenEmpty() {
-            when(userService.getUserById(user1.getId())).thenReturn(user1);
-            when(eventService.getEventById(event1.getId())).thenReturn(event1);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event1));
             when(requestRepository.findAllByEventId(event1.getId())).thenReturn(List.of());
 
             List<ParticipationRequestDto> participationRequestsDto = requestService.getEventRequestsByEventOwner(user1.getId(), event1.getId());
 
             assertTrue(participationRequestsDto.isEmpty());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByEventId(any());
         }
 
         @Test
         public void getEventReqByEventOwnerWhenUserNotEventOwner() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(eventService.getEventById(event1.getId())).thenReturn(event1);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event1));
 
             ForbiddenException exception = assertThrows(ForbiddenException.class,
                     () -> requestService.getEventRequestsByEventOwner(user2.getId(), event1.getId()));
             assertEquals("Пользователь не является владельцем.", exception.getMessage());
 
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
         }
     }
 
@@ -457,8 +452,7 @@ public class RequestServiceTest {
 
         @Test
         public void editEvent() {
-            when(userService.getUserById(user1.getId())).thenReturn(user1);
-            when(eventService.getEventById(event2.getId())).thenReturn(event2);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event2));
             when(requestRepository.findAllByIdIn(eventRequestStatusUpdateRequest.getRequestIds()))
                     .thenReturn(List.of(request4));
             when(requestRepository.saveAll(any())).thenReturn(List.of(request4));
@@ -473,8 +467,7 @@ public class RequestServiceTest {
 
             assertEquals(request4.getId(), participationRequestDto.getId());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByIdIn(any());
             verify(requestRepository, times(1)).saveAll(requestsArgumentCaptor.capture());
             verify(requestMapper, times(1)).toParticipationRequestDto(any());
@@ -497,8 +490,7 @@ public class RequestServiceTest {
             confirmedRequests.put(event2.getId(), 1L);
             eventRequestStatusUpdateRequest.setStatus(RequestStatusAction.CONFIRMED);
 
-            when(userService.getUserById(user1.getId())).thenReturn(user1);
-            when(eventService.getEventById(event2.getId())).thenReturn(event2);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event2));
             when(requestRepository.findAllByIdIn(eventRequestStatusUpdateRequest.getRequestIds()))
                     .thenReturn(List.of(request4));
             when(statsService.getConfirmedRequests(any())).thenReturn(confirmedRequests);
@@ -520,8 +512,7 @@ public class RequestServiceTest {
             assertEquals(request4.getId(), confirmedRequestsDto.getId());
             assertEquals(request3.getId(), rejectedRequestsDto.getId());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByIdIn(any());
             verify(statsService, times(1)).getConfirmedRequests(any());
             verify(requestRepository, times(2)).saveAll(requestsArgumentCaptor.capture());
@@ -556,8 +547,7 @@ public class RequestServiceTest {
 
         @Test
         public void editEventWhenUserNotEventOwner() {
-            when(userService.getUserById(user2.getId())).thenReturn(user2);
-            when(eventService.getEventById(event2.getId())).thenReturn(event2);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event2));
 
             ForbiddenException exception = assertThrows(ForbiddenException.class,
                     () -> requestService.editEventRequestsByEventOwner(user2.getId(), event2.getId(),
@@ -565,15 +555,13 @@ public class RequestServiceTest {
             assertEquals("Пользователь не является владельцем.", exception.getMessage());
 
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, never()).saveAll(any());
         }
 
         @Test
         public void editEventWhenRequestsNotFound() {
-            when(userService.getUserById(anyLong())).thenReturn(user1);
-            when(eventService.getEventById(anyLong())).thenReturn(event2);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event2));
             when(requestRepository.findAllByIdIn(any())).thenReturn(List.of());
 
             NotFoundException exception = assertThrows(NotFoundException.class,
@@ -581,16 +569,14 @@ public class RequestServiceTest {
                             eventRequestStatusUpdateRequest));
             assertEquals("Часть запросы на участие не найдено.", exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByIdIn(any());
             verify(requestRepository, never()).saveAll(any());
         }
 
         @Test
         public void editEventWhenRequestsStatusNotPending() {
-            when(userService.getUserById(user1.getId())).thenReturn(user1);
-            when(eventService.getEventById(event2.getId())).thenReturn(event2);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event2));
             when(requestRepository.findAllByIdIn(eventRequestStatusUpdateRequest.getRequestIds()))
                     .thenReturn(List.of(request2));
 
@@ -599,8 +585,7 @@ public class RequestServiceTest {
                             eventRequestStatusUpdateRequest));
             assertEquals("Изменять можно только заявки, находящиеся в ожидании.", exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByIdIn(any());
             verify(requestRepository, never()).saveAll(any());
         }
@@ -610,8 +595,7 @@ public class RequestServiceTest {
             confirmedRequests.put(event2.getId(), 2L);
             eventRequestStatusUpdateRequest.setStatus(RequestStatusAction.CONFIRMED);
 
-            when(userService.getUserById(anyLong())).thenReturn(user1);
-            when(eventService.getEventById(anyLong())).thenReturn(event2);
+            when(eventRepository.findById(any())).thenReturn(Optional.of(event2));
             when(requestRepository.findAllByIdIn(any()))
                     .thenReturn(List.of(request4));
             when(statsService.getConfirmedRequests(any())).thenReturn(confirmedRequests);
@@ -622,8 +606,7 @@ public class RequestServiceTest {
             assertEquals(String.format("Достигнут лимит подтвержденных запросов на участие: %s",
                     event2.getParticipantLimit()), exception.getMessage());
 
-            verify(userService, times(1)).getUserById(any());
-            verify(eventService, times(1)).getEventById(any());
+            verify(eventRepository, times(1)).findById(any());
             verify(requestRepository, times(1)).findAllByIdIn(any());
             verify(statsService, times(1)).getConfirmedRequests(any());
             verify(requestRepository, never()).saveAll(any());

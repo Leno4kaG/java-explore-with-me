@@ -39,6 +39,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class EventService {
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
@@ -48,7 +49,7 @@ public class EventService {
     private final EventMapper eventMapper;
     private final LocationMapper locationMapper;
 
-    @Transactional(readOnly = true)
+
     public List<EventFullDto> getEventsByAdmin(List<Long> users, List<EventState> states, List<Long> categories,
                                                LocalDateTime rangeStart, LocalDateTime rangeEnd, Integer from, Integer size) {
         log.info("Получение всех событий для администратора с параметрами users = {}, states = {}, categoriesId = {}, " +
@@ -131,7 +132,6 @@ public class EventService {
         return toEventFullDto(eventRepository.save(event));
     }
 
-    @Transactional(readOnly = true)
     public List<EventShortDto> getAllEventsByPrivate(Long userId, Pageable pageable) {
         log.info("Получение событий пользователя с id {} и пагинацией {}", userId, pageable);
 
@@ -159,7 +159,6 @@ public class EventService {
         return toEventFullDto(eventRepository.save(newEvent));
     }
 
-    @Transactional(readOnly = true)
     public EventFullDto getEventByPrivate(Long userId, Long eventId) {
         log.info("Получение события с id {}, созданного пользователем с id {}", eventId, userId);
 
@@ -236,7 +235,6 @@ public class EventService {
         return toEventFullDto(eventRepository.save(event));
     }
 
-    @Transactional(readOnly = true)
     public List<EventShortDto> getEventsByPublic(
             String text, List<Long> categories, Boolean paid, LocalDateTime rangeStart, LocalDateTime rangeEnd,
             Boolean onlyAvailable, EventSortType sort, Integer from, Integer size, HttpServletRequest request) {
@@ -291,7 +289,6 @@ public class EventService {
         return toEventFullDto(event);
     }
 
-    @Transactional(readOnly = true)
     public Event getEventById(Long eventId) {
         log.info("Вывод события с id {}", eventId);
 
@@ -299,7 +296,6 @@ public class EventService {
                 .orElseThrow(() -> new NotFoundException("События с таким id не найдено."));
     }
 
-    @Transactional(readOnly = true)
     public List<Event> getEventsByIds(List<Long> eventsId) {
         log.info("Вывод списка событий с ids {}", eventsId);
 

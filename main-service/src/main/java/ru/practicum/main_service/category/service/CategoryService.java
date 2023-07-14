@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
@@ -31,7 +32,7 @@ public class CategoryService {
         return categoryMapper.toCategoryDto(categoryRepository.save(categoryMapper.newCategoryDtoToCategory(newCategoryDto)));
     }
 
-    @Transactional(readOnly = true)
+
     public List<CategoryDto> getAll(Pageable pageable) {
         log.info("Получение всех категорий {}", pageable);
 
@@ -40,7 +41,7 @@ public class CategoryService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(readOnly = true)
+
     public CategoryDto getById(Long catId) {
         log.info("Получение категории по id {}", catId);
 

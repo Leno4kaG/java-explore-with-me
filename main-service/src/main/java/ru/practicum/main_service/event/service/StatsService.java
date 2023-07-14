@@ -1,5 +1,6 @@
 package ru.practicum.main_service.event.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +15,6 @@ import ru.practicum.stats.dto.ViewStats;
 import ru.practicum.statsclient.StatsClient;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,8 +53,8 @@ public class StatsService {
 
         try {
             return Arrays.asList(mapper.readValue(mapper.writeValueAsString(response.getBody()), ViewStats[].class));
-        } catch (IOException exception) {
-            throw new ClassCastException(exception.getMessage());
+        } catch (JsonProcessingException exception) {
+            throw new RuntimeException(exception.getMessage());
         }
     }
 
@@ -88,7 +88,7 @@ public class StatsService {
             stats.forEach(stat -> {
                 Long eventId = Long.parseLong(stat.getUri()
                         .split("/", 0)[2]);
-                views.put(eventId, views.getOrDefault(eventId, 0L) + stat.getHits());
+                views.merge(eventId, stat.getHits(), Long::sum);
             });
         }
 

@@ -28,6 +28,7 @@ import java.util.Set;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CompilationService {
 
     private final EventRepository eventRepository;
@@ -93,7 +94,7 @@ public class CompilationService {
         compilationRepository.deleteById(compId);
     }
 
-    @Transactional(readOnly = true)
+
     public List<CompilationDto> getAll(Boolean pinned, Pageable pageable) {
         log.info("Получение всех подборок событий с параметрами pinned = {}, pageable = {}", pinned, pageable);
 
@@ -123,7 +124,7 @@ public class CompilationService {
         return result;
     }
 
-    @Transactional(readOnly = true)
+
     public CompilationDto getById(Long compId) {
         log.info("Получение подборки событий по id {}", compId);
 

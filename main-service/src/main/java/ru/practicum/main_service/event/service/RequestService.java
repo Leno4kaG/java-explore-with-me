@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.main_service.event.domain.model.Event;
 import ru.practicum.main_service.event.domain.model.Request;
+import ru.practicum.main_service.event.domain.repository.EventRepository;
 import ru.practicum.main_service.event.domain.repository.RequestRepository;
 import ru.practicum.main_service.event.dto.EventRequestStatusUpdateRequest;
 import ru.practicum.main_service.event.dto.EventRequestStatusUpdateResult;
@@ -17,7 +18,7 @@ import ru.practicum.main_service.event.mapper.RequestMapper;
 import ru.practicum.main_service.exception.ForbiddenException;
 import ru.practicum.main_service.exception.NotFoundException;
 import ru.practicum.main_service.user.domain.model.User;
-import ru.practicum.main_service.user.service.UserService;
+import ru.practicum.main_service.user.domain.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -29,19 +30,20 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(readOnly = true)
 public class RequestService {
-    private final UserService userService;
-    private final EventService eventService;
+    private final UserRepository userRepository;
+    private final EventRepository eventRepository;
     private final StatsService statsService;
     private final RequestRepository requestRepository;
     private final RequestMapper requestMapper;
 
-    @Transactional(readOnly = true)
+
     public List<ParticipationRequestDto> getEventRequestsByRequester(Long userId) {
 
         log.info("Получение списка запросов на участие в событиях пользователем с id {}", userId);
 
-        userService.getUserById(userId);
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден."));
 
         return toParticipationRequestsDto(requestRepository.findAllByRequesterId(userId));
     }
@@ -51,8 +53,8 @@ public class RequestService {
 
         log.info("Создание запроса на участие в событии с id {} пользователем с id {}", eventId, userId);
 
-        User user = userService.getUserById(userId);
-        Event event = eventService.getEventById(eventId);
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден."));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Событие с таким id не найдено."));
 
         if (Objects.equals(event.getInitiator().getId(), userId)) {
             throw new ForbiddenException("Запрос на собственное событие создавать запрещено.");
@@ -92,7 +94,7 @@ public class RequestService {
     public ParticipationRequestDto cancelEventRequest(Long userId, Long requestId) {
         log.info("Отмена запроса с id {} на участие в событии пользователем с id {}", requestId, userId);
 
-        userService.getUserById(userId);
+        userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь с таким id не найден."));
 
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Заявки на участие с таким id не найдено."));
@@ -104,12 +106,11 @@ public class RequestService {
         return requestMapper.toParticipationRequestDto(requestRepository.save(request));
     }
 
-    @Transactional(readOnly = true)
+
     public List<ParticipationRequestDto> getEventRequestsByEventOwner(Long userId, Long eventId) {
         log.info("Получение списка запросов на участие в событии с id {} владельцем с id {}", eventId, userId);
 
-        userService.getUserById(userId);
-        Event event = eventService.getEventById(eventId);
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Событие с таким id не найдено."));
 
         checkUserIsOwner(event.getInitiator().getId(), userId);
 
@@ -122,8 +123,7 @@ public class RequestService {
         log.info("Обновление запросов на участие в событии с id {} владельцем с id {} и параметрами {}",
                 eventId, userId, eventRequestStatusUpdateRequest);
 
-        userService.getUserById(userId);
-        Event event = eventService.getEventById(eventId);
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Событие с таким id не найдено."));
 
         checkUserIsOwner(event.getInitiator().getId(), userId);
 
