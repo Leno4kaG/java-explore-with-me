@@ -172,7 +172,7 @@ public class CommentRepositoryTest {
     @Nested
     class FindAllByAuthorIdAndEventId {
         @Test
-        public void FindAllByAuthor() {
+        public void findAllByAuthor() {
             List<Comment> commentsFromRepository = commentRepository.findAllByAuthorIdAndEventId(user1.getId(), event1.getId());
 
             assertEquals(2, commentsFromRepository.size());
@@ -185,7 +185,7 @@ public class CommentRepositoryTest {
         }
 
         @Test
-        public void FindAllByAuthorTest() {
+        public void findAllByAuthorTest() {
             List<Comment> commentsFromRepository = commentRepository.findAllByAuthorIdAndEventId(user1.getId(), event2.getId());
 
             assertEquals(1, commentsFromRepository.size());
@@ -196,7 +196,7 @@ public class CommentRepositoryTest {
         }
 
         @Test
-        public void FindAllByAuthorEmpty() {
+        public void findAllByAuthorEmpty() {
             List<Comment> commentsFromRepository = commentRepository.findAllByAuthorIdAndEventId(user2.getId(), event1.getId());
 
             assertTrue(commentsFromRepository.isEmpty());
@@ -206,7 +206,7 @@ public class CommentRepositoryTest {
     @Nested
     class FindAllByEventId {
         @Test
-        public void FindAllByEventId() {
+        public void findAllByEventId() {
             List<Comment> commentsFromRepository = commentRepository.findAllByEventId(event1.getId(), pageable);
 
             assertEquals(2, commentsFromRepository.size());
@@ -219,7 +219,7 @@ public class CommentRepositoryTest {
         }
 
         @Test
-        public void FindAllByEventIdTest() {
+        public void findAllByEventIdTest() {
             List<Comment> commentsFromRepository = commentRepository.findAllByEventId(event2.getId(), pageable);
 
             assertEquals(1, commentsFromRepository.size());
@@ -230,7 +230,7 @@ public class CommentRepositoryTest {
         }
 
         @Test
-        public void FindAllByEventIdEmpty() {
+        public void findAllByEventIdEmpty() {
             List<Comment> commentsFromRepository = commentRepository.findAllByEventId(event3.getId(), pageable);
 
             assertTrue(commentsFromRepository.isEmpty());
