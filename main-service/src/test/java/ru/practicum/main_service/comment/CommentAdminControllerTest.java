@@ -46,16 +46,16 @@ public class CommentAdminControllerTest {
             .text("test text 1")
             .author(userShortDto)
             .eventId(1L)
-            .createdOn(LocalDateTime.now().minusHours(2))
-            .editedOn(LocalDateTime.now().minusHours(1))
+            .createdIn(LocalDateTime.now().minusHours(2))
+            .editedIn(LocalDateTime.now().minusHours(1))
             .build();
     private final CommentDto commentDto2 = CommentDto.builder()
             .id(2L)
             .text("test text 2")
             .author(userShortDto)
             .eventId(1L)
-            .createdOn(LocalDateTime.now().minusHours(2))
-            .editedOn(null)
+            .createdIn(LocalDateTime.now().minusHours(2))
+            .editedIn(null)
             .build();
 
     @Nested

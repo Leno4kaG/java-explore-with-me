@@ -22,7 +22,7 @@ public class CommentDto {
    private UserShortDto author;
    private Long eventId;
     @JsonFormat(pattern = Utils.DATE_FORMAT, shape = JsonFormat.Shape.STRING)
-   private LocalDateTime createdOn;
+   private LocalDateTime createdIn;
     @JsonFormat(pattern = Utils.DATE_FORMAT, shape = JsonFormat.Shape.STRING)
-   private LocalDateTime editedOn;
+   private LocalDateTime editedIn;
 }

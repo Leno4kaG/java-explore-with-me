@@ -6,8 +6,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
+import org.hibernate.annotations.UpdateTimestamp;
 import ru.practicum.main_service.event.domain.model.Event;
 import ru.practicum.main_service.user.domain.model.User;
 
@@ -45,6 +47,8 @@ public class Comment {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Event event;
     @Column(nullable = false)
-    private LocalDateTime createdOn;
-    private LocalDateTime editedOn;
+    @CreationTimestamp
+    private LocalDateTime createdIn;
+    @UpdateTimestamp
+    private LocalDateTime editedIn;
 }

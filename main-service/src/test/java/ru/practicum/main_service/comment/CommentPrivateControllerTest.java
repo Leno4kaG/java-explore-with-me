@@ -55,24 +55,24 @@ public class CommentPrivateControllerTest {
             .text("test text 1")
             .author(userShortDto)
             .eventId(event.getId())
-            .createdOn(LocalDateTime.now().minusHours(2))
-            .editedOn(LocalDateTime.now().minusHours(1))
+            .createdIn(LocalDateTime.now().minusHours(2))
+            .editedIn(LocalDateTime.now().minusHours(1))
             .build();
     private final CommentDto commentDto2 = CommentDto.builder()
             .id(2L)
             .text("test text 2")
             .author(userShortDto)
             .eventId(event.getId())
-            .createdOn(LocalDateTime.now().minusHours(2))
-            .editedOn(null)
+            .createdIn(LocalDateTime.now().minusHours(2))
+            .editedIn(null)
             .build();
     private final CommentDto updatedCommentDto1 = CommentDto.builder()
             .id(commentDto1.getId())
             .text("updated test text 1")
             .author(commentDto1.getAuthor())
             .eventId(commentDto1.getEventId())
-            .createdOn(commentDto1.getCreatedOn())
-            .editedOn(commentDto1.getEditedOn())
+            .createdIn(commentDto1.getCreatedIn())
+            .editedIn(commentDto1.getEditedIn())
             .build();
     private NewCommentDto newCommentDto;
 

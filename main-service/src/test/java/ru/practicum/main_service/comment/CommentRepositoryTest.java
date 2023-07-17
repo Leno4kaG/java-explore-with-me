@@ -25,6 +25,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
@@ -110,24 +111,18 @@ public class CommentRepositoryTest {
             .text("test comment 1")
             .author(user1)
             .event(event1)
-            .createdOn(LocalDateTime.now().minusHours(8))
-            .editedOn(null)
             .build();
     private final Comment comment2 = Comment.builder()
             .id(2L)
             .text("test comment 2")
             .author(user1)
             .event(event1)
-            .createdOn(LocalDateTime.now().minusHours(7))
-            .editedOn(LocalDateTime.now().minusHours(5))
             .build();
     private final Comment comment3 = Comment.builder()
             .id(3L)
             .text("test comment 3")
             .author(user1)
             .event(event2)
-            .createdOn(LocalDateTime.now().minusHours(8))
-            .editedOn(null)
             .build();
 
     @BeforeEach
@@ -148,7 +143,7 @@ public class CommentRepositoryTest {
     class FindAllByAuthorId {
         @Test
         public void findAllByAuthor() {
-            List<Comment> commentsFromRepository = commentRepository.findAllByAuthorId(user1.getId());
+            List<Comment> commentsFromRepository = commentRepository.findAllByAuthorId(user1.getId(), pageable);
 
             assertEquals(3, commentsFromRepository.size());
 
@@ -163,7 +158,7 @@ public class CommentRepositoryTest {
 
         @Test
         public void findAllByAuthorEmpty() {
-            List<Comment> commentsFromRepository = commentRepository.findAllByAuthorId(user2.getId());
+            List<Comment> commentsFromRepository = commentRepository.findAllByAuthorId(user2.getId(), pageable);
 
             assertTrue(commentsFromRepository.isEmpty());
         }
@@ -242,7 +237,7 @@ public class CommentRepositoryTest {
         assertEquals(comment.getText(), result.getText());
         assertEquals(comment.getAuthor(), result.getAuthor());
         assertEquals(comment.getEvent().getId(), result.getEvent().getId());
-        assertEquals(comment.getCreatedOn(), result.getCreatedOn());
-        assertEquals(comment.getEditedOn(), result.getEditedOn());
+        assertNotNull(result.getCreatedIn());
+        assertNotNull(result.getEditedIn());
     }
 }

@@ -150,48 +150,42 @@ public class CommentServiceTest {
             .text(newCommentDto.getText())
             .author(user1)
             .event(event1)
-            .createdOn(LocalDateTime.now().minusHours(8))
-            .editedOn(null)
             .build();
     private final Comment comment2 = Comment.builder()
             .id(2L)
             .text("test comment 2")
             .author(user1)
             .event(event1)
-            .createdOn(LocalDateTime.now().minusHours(7))
-            .editedOn(LocalDateTime.now().minusHours(5))
             .build();
     private final Comment comment3 = Comment.builder()
             .id(3L)
             .text("test comment 3")
             .author(user1)
             .event(event2)
-            .createdOn(LocalDateTime.now().minusHours(8))
-            .editedOn(null)
             .build();
     private final CommentDto commentDto1 = CommentDto.builder()
             .id(comment1.getId())
             .text(comment1.getText())
             .author(userShortDto1)
             .eventId(comment1.getEvent().getId())
-            .createdOn(comment1.getCreatedOn())
-            .editedOn(comment1.getEditedOn())
+            .createdIn(comment1.getCreatedIn())
+            .editedIn(comment1.getEditedIn())
             .build();
     private final CommentDto commentDto2 = CommentDto.builder()
             .id(comment2.getId())
             .text(comment2.getText())
             .author(userShortDto1)
             .eventId(comment2.getEvent().getId())
-            .createdOn(comment2.getCreatedOn())
-            .editedOn(comment2.getEditedOn())
+            .createdIn(comment2.getCreatedIn())
+            .editedIn(comment2.getEditedIn())
             .build();
     private final CommentDto commentDto3 = CommentDto.builder()
             .id(comment3.getId())
             .text(comment3.getText())
             .author(userShortDto1)
             .eventId(comment3.getEvent().getId())
-            .createdOn(comment3.getCreatedOn())
-            .editedOn(comment3.getEditedOn())
+            .createdIn(comment3.getCreatedIn())
+            .editedIn(comment3.getEditedIn())
             .build();
 
     @BeforeEach
@@ -285,7 +279,7 @@ public class CommentServiceTest {
 
         @Test
         public void getWhenEventIsNull() {
-            when(commentRepository.findAllByAuthorId(user1.getId())).thenReturn(List.of(comment1, comment2, comment3));
+            when(commentRepository.findAllByAuthorId(user1.getId(), pageable)).thenReturn(List.of(comment1, comment2, comment3));
 
             List<CommentDto> commentsFromService = commentService.getCommentsByPrivate(user1.getId(), null,
                     pageable);
@@ -301,7 +295,7 @@ public class CommentServiceTest {
             assertEquals(commentDto3, commentFromService3);
 
             verify(userRepository, times(1)).findById(any());
-            verify(commentRepository, times(1)).findAllByAuthorId(any());
+            verify(commentRepository, times(1)).findAllByAuthorId(any(), any());
             verify(commentMapper, times(3)).toCommentDto(any());
         }
     }
@@ -327,8 +321,8 @@ public class CommentServiceTest {
             assertEquals(comment1.getText(), savedComment.getText());
             assertEquals(comment1.getAuthor(), savedComment.getAuthor());
             assertEquals(comment1.getEvent().getId(), savedComment.getEvent().getId());
-            assertNotNull(savedComment.getCreatedOn());
-            assertNull(savedComment.getEditedOn());
+            assertEquals(comment1.getCreatedIn(), savedComment.getCreatedIn());
+            assertNull(savedComment.getEditedIn());
         }
 
         @Test
@@ -365,8 +359,7 @@ public class CommentServiceTest {
             assertEquals(newCommentDtoToUpdate.getText(), savedComment.getText());
             assertEquals(comment3.getAuthor(), savedComment.getAuthor());
             assertEquals(comment3.getEvent().getId(), savedComment.getEvent().getId());
-            assertEquals(comment3.getCreatedOn(), savedComment.getCreatedOn());
-            assertNotNull(savedComment.getEditedOn());
+            assertEquals(comment3.getCreatedIn(), savedComment.getCreatedIn());
         }
 
         @Test

@@ -18,7 +18,6 @@ import ru.practicum.main_service.exception.NotFoundException;
 import ru.practicum.main_service.user.domain.model.User;
 import ru.practicum.main_service.user.domain.repository.UserRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -63,7 +62,7 @@ public class CommentService {
 
             comments = commentRepository.findAllByAuthorIdAndEventId(userId, eventId);
         } else {
-            comments = commentRepository.findAllByAuthorId(userId);
+            comments = commentRepository.findAllByAuthorId(userId, pageable);
         }
 
         return comments.stream()
@@ -90,7 +89,6 @@ public class CommentService {
                 .text(newCommentDto.getText())
                 .author(user)
                 .event(event)
-                .createdOn(LocalDateTime.now())
                 .build();
 
         return commentMapper.toCommentDto(commentRepository.save(comment));
@@ -106,7 +104,6 @@ public class CommentService {
         checkUserIsOwner(userId, commentFromRepository.getAuthor().getId());
 
         commentFromRepository.setText(newCommentDto.getText());
-        commentFromRepository.setEditedOn(LocalDateTime.now());
 
         return commentMapper.toCommentDto(commentRepository.save(commentFromRepository));
     }
