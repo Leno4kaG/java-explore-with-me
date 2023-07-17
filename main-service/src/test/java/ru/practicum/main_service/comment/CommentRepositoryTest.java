@@ -25,7 +25,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
@@ -106,19 +105,19 @@ public class CommentRepositoryTest {
             .eventDate(LocalDateTime.now().plusHours(5))
             .requestModeration(false)
             .build();
-    private final Comment comment1 = Comment.builder()
+    private Comment comment1 = Comment.builder()
             .id(1L)
             .text("test comment 1")
             .author(user1)
             .event(event1)
             .build();
-    private final Comment comment2 = Comment.builder()
+    private Comment comment2 = Comment.builder()
             .id(2L)
             .text("test comment 2")
             .author(user1)
             .event(event1)
             .build();
-    private final Comment comment3 = Comment.builder()
+    private Comment comment3 = Comment.builder()
             .id(3L)
             .text("test comment 3")
             .author(user1)
@@ -134,9 +133,9 @@ public class CommentRepositoryTest {
         eventRepository.save(event1);
         eventRepository.save(event2);
         eventRepository.save(event3);
-        commentRepository.save(comment1);
-        commentRepository.save(comment2);
-        commentRepository.save(comment3);
+        comment1 = commentRepository.save(comment1);
+        comment2 = commentRepository.save(comment2);
+        comment3 = commentRepository.save(comment3);
     }
 
     @Nested
@@ -237,7 +236,7 @@ public class CommentRepositoryTest {
         assertEquals(comment.getText(), result.getText());
         assertEquals(comment.getAuthor(), result.getAuthor());
         assertEquals(comment.getEvent().getId(), result.getEvent().getId());
-        assertNotNull(result.getCreatedIn());
-        assertNotNull(result.getEditedIn());
+        assertEquals(comment.getCreatedIn(), result.getCreatedIn());
+        assertEquals(comment.getEditedIn(), result.getEditedIn());
     }
 }

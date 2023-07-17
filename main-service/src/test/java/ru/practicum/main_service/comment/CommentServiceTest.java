@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -360,6 +359,7 @@ public class CommentServiceTest {
             assertEquals(comment3.getAuthor(), savedComment.getAuthor());
             assertEquals(comment3.getEvent().getId(), savedComment.getEvent().getId());
             assertEquals(comment3.getCreatedIn(), savedComment.getCreatedIn());
+            assertEquals(comment3.getEditedIn(), savedComment.getEditedIn());
         }
 
         @Test
